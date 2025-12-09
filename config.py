@@ -1,6 +1,6 @@
 import os
 
-secret_key = '1234'
+SECRET_KEY = 'your-super-secret-key-change-in-production-2024'
 PWD = os.path.abspath(os.curdir)
 
 DEBUG = True

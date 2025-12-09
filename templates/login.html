@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to Task List">
+    <title>Sign In - Task List</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="auth-page">
+        <div class="form-container">
+            <div class="auth-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                <span>Task List</span>
+            </div>
+
+            <div class="form-card">
+                <div class="form-header">
+                    <h1 class="form-title">Welcome back</h1>
+                    <p class="form-subtitle">Sign in to your account</p>
+                </div>
+
+                <form action="." method="POST">
+                    <div class="form-group">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-input", placeholder="you@example.com", type="email") }}
+                        {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                        <p class="form-error">{{ error }}</p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-input", placeholder="••••••••") }}
+                        {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                        <p class="form-error">{{ error }}</p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-footer">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+
+                <div class="form-link">
+                    Don't have an account? <a href="{{ url_for('register') }}">Create one</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

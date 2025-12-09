@@ -25,40 +25,29 @@ def add_data_tables():
     with app.app_context():
         db.create_all()
 
+        # Create expanded categories
         categories = [
-            Category(name="Homeworks"),
+            Category(name="Personal"),
             Category(name="Work"),
-            Category(name="Academy"),
-            Category(name="Sport")
+            Category(name="Study"),
+            Category(name="Health"),
+            Category(name="Shopping"),
+            Category(name="Finance"),
+            Category(name="Home"),
+            Category(name="Travel"),
+            Category(name="Social"),
+            Category(name="Hobbies"),
+            Category(name="Urgent"),
+            Category(name="Projects")
         ]
 
         db.session.add_all(categories)
         db.session.commit()
+        
+        print("Database initialized with categories!")
+        print("Categories created:", ", ".join([c.name for c in categories]))
+        print("\nYou can now run 'python demo.py' and register a new user.")
 
-        t1 = Task(name = "Task 1", description="You have to study IAW")
-        t1.category_id = categories[0].id
-
-        t2 = Task(name = "Task 2", description="You should do homework")
-        t2.category_id = categories[0].id
-
-        t3 = Task(name = "Task 3", description="Practice")
-        t3.category_id = categories[1].id
-
-        t4 = Task(name = "Task 4", description="More Practice")
-        t4.category_id = categories[1].id
-
-        t5 = Task(name = "Task 5", description="Make a virtual enviroment")
-        t5.category_id = categories[2].id
-
-        t6 = Task(name = "Task 6", description="Debug Your Code")
-        t6.category_id = categories[2].id
-
-        t7 = Task(name = "Task 7", description="Go to Gym", due_date=datetime.datetime.now())
-        t7.category_id = categories[3].id
-
-
-        db.session.add_all([t1, t2, t3, t4, t5, t6])
-        db.session.commit()
 
 if __name__ == '__main__':
     drop_tables()

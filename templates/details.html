@@ -1,15 +1,79 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 
-{% block body %}
-<h1>Página de Detalles de la Tarea {{task.id}}</h1>
+{% block title %}{{ task.name }} - Task List{% endblock %}
 
-<p>Name: {{task.name}} </p>
-<p>Description: {{task.description}} </p>
-<p>Due_Date: {{task.due_date}}</p>
-<p>Categoty: {{task.category_id}} - {{task.category.name}}</p>
+{% block content %}
+<div class="detail-card">
+    <div class="detail-header">
+        <h1 class="detail-title">{{ task.name }}</h1>
+        <div class="detail-badges">
+            <span class="badge badge-category">{{ task.category.name }}</span>
+            {% if task.completed %}
+            <span class="badge badge-completed">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Completed
+            </span>
+            {% else %}
+            <span class="badge badge-pending">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                </svg>
+                Pending
+            </span>
+            {% endif %}
+        </div>
+    </div>
 
+    <div class="detail-body">
+        {% if task.description %}
+        <div class="detail-section">
+            <p class="detail-label">Description</p>
+            <p class="detail-value">{{ task.description }}</p>
+        </div>
+        {% endif %}
 
+        {% if task.due_date %}
+        <div class="detail-section">
+            <p class="detail-label">Due Date</p>
+            <p class="detail-value">{{ task.due_date.strftime('%A, %d %B %Y at %H:%M') }}</p>
+        </div>
+        {% endif %}
 
+        <div class="detail-section">
+            <p class="detail-label">Category</p>
+            <p class="detail-value">{{ task.category.name }}</p>
+        </div>
+    </div>
 
+    <div class="detail-actions">
+        <a href="{{ url_for('toggle_complete', id=task.id) }}"
+            class="btn {% if task.completed %}btn-secondary{% else %}btn-success{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {% if task.completed %}Mark as Pending{% else %}Mark as Complete{% endif %}
+        </a>
+        <a href="{{ url_for('update', id=task.id) }}" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Edit
+        </a>
+        <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-danger"
+            onclick="return confirm('Are you sure you want to delete this task?')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            Delete
+        </a>
+    </div>
+</div>
 
+<div class="form-link mt-4">
+    <a href="{{ url_for('home') }}">← Back to tasks</a>
+</div>
 {% endblock %}

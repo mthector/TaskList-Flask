@@ -1,36 +1,91 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 
 {% block title %}
+{% if view == 'pending' %}Pending Tasks{% elif view == 'completed' %}Completed Tasks{% else %}All Tasks{% endif %} -
 Task List
-{% endblock %} 
-
-{% block style %}
-.actions {
-    float: right;
-}
-
-.task {
-    border: 1px solid lightgrey;
-    padding: 5px;
-    margin: 10px 0px;
-}
-
 {% endblock %}
 
-{% block body %}
-<h1>To-Do List</h1>
-{%for task in tasks%}
-<div class="task">
-    {{task.name}}
-    {% if task.due_date %}
-    - {{task.due_date}}
-    {% endif %}
-    <span class="actions">
-        <a href="/task/{{task.id}}/">Details</a>
-        <a href="/task/{{task.id}}/update/">Update</a>
-        <a href="/task/{{task.id}}/delete/">Delete</a>
-    </span>
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">
+            {% if view == 'pending' %}Pending Tasks{% elif view == 'completed' %}Completed Tasks{% else %}All Tasks{%
+            endif %}
+        </h1>
+        <p class="page-subtitle">{{ tasks|length }} task{% if tasks|length != 1 %}s{% endif %}</p>
+    </div>
+    <a href="{{ url_for('create') }}" class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        New Task
+    </a>
 </div>
-{%endfor%}
-<a href="/task/create/">Create</a>
+
+{% if tasks %}
+<div class="task-list">
+    {% for task in tasks %}
+    <div class="task-card {% if task.completed %}completed{% endif %}">
+        <a href="{{ url_for('toggle_complete', id=task.id) }}"
+            class="task-checkbox {% if task.completed %}completed{% endif %}"
+            title="{% if task.completed %}Mark as pending{% else %}Mark as complete{% endif %}">
+            {% if task.completed %}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {% endif %}
+        </a>
+        <div class="task-content">
+            <a href="{{ url_for('details', id=task.id) }}" class="task-name">{{ task.name }}</a>
+            <div class="task-meta">
+                <span class="task-category">{{ task.category.name }}</span>
+                {% if task.due_date %}
+                <span class="task-meta-item task-due">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    {{ task.due_date.strftime('%d %b %Y, %H:%M') }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="task-actions">
+            <a href="{{ url_for('update', id=task.id) }}" class="btn btn-ghost btn-icon" title="Edit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            </a>
+            <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-ghost btn-icon" title="Delete"
+                onclick="return confirm('Are you sure you want to delete this task?')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 11l3 3L22 4" />
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+    <h3 class="empty-state-title">
+        {% if view == 'pending' %}No pending tasks{% elif view == 'completed' %}No completed tasks{% else %}No tasks
+        yet{% endif %}
+    </h3>
+    <p class="empty-state-text">
+        {% if view == 'pending' %}Create a new task to get started{% elif view == 'completed' %}Complete some tasks to
+        see them here{% else %}Create your first task{% endif %}
+    </p>
+    {% if view != 'completed' %}
+    <a href="{{ url_for('create') }}" class="btn btn-primary">Create Task</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}
